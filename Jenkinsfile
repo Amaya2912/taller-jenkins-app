@@ -98,11 +98,27 @@ pipeline {
                 '''
             }
 
+            
             post {
                 always {
                     sh 'docker rm -f "$CONTENEDOR" || true'
                 }
             }
         }
+
+        
+        stage('Desplegar') {
+            agent any
+
+            steps {
+                sh '''
+                    docker rm -f taller-app || true
+                    docker run -d --name taller-app --restart unless-stopped -p 8000:8000 "$IMAGEN"
+                    sleep 5
+                    curl -fs http://docker:8000/version
+                '''
+            }
+        }
+
     }
 }
