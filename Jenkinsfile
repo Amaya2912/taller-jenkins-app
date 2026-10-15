@@ -42,7 +42,7 @@ pipeline {
             }
 
             steps {
-                sh '$MVN test'
+                sh '$MVN clean test'
             }
 
             post {
