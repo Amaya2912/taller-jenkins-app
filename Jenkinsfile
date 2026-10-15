@@ -44,6 +44,13 @@ pipeline {
             steps {
                 sh '$MVN test'
             }
+
+            post {
+                always {
+                    junit allowEmptyResults: true,
+                          testResults: 'target/surefire-reports/*.xml'
+                }
+            }
         }
 
         stage('Empaquetar') {
@@ -62,6 +69,7 @@ pipeline {
 
             steps {
                 sh '$MVN -DskipTests package'
+
                 archiveArtifacts artifacts: 'target/taller-app.jar',
                                  fingerprint: true
             }
@@ -94,15 +102,6 @@ pipeline {
                 always {
                     sh 'docker rm -f "$CONTENEDOR" || true'
                 }
-            }
-        }
-    }
-
-    post {
-        always {
-            node {
-                junit allowEmptyResults: true,
-                      testResults: 'target/surefire-reports/*.xml'
             }
         }
     }
